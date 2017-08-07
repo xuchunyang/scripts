@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2017 Chunyang Xu
+#
+# treeize - Treeize the output of git ls-files
+#
+# Depends: git(1), tree(1)
+
+if ! [[ -p /dev/stdin ]]; then
+    echo "error: not piped input" 1>&2
+    echo "usage: git ls-files | ${0##*/}" 1>&2
+    exit 1
+elif [[ $# -ne 0 ]]; then
+    echo "error: too many arguments" 1>&2
+    echo "usage: git ls-files | ${0##*/}" 1>&2
+    exit 1
+fi
+
+command -v tree >/dev/null || {
+    echo "tree is not installed" 1>&2
+    exit 1
+}
+
+cd "$(mktemp -d)" || exit 1
+
+# XXX: This is too slow, try cache the previous result?
+while IFS= read -r file; do
+    [[ "$file" == */* ]] && mkdir -p "${file%/*}"
+    touch "$file"
+done < /dev/stdin
+
+tree
