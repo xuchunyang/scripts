@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2017 Chunyang Xu
+#
+# git-tree - Treeize the output of git ls-files
+#
+# Depends: git(1), tree(1), parallel(1)
+#
+# Known bug: Too slow
+
+if [[ $# -ne 0 ]]; then
+    echo "error: too many arguments" 1>&2
+    echo "usage: ${0##*/}" 1>&2
+    exit 1
+fi
+
+check () {
+    for cmd in "$@"; do
+        command -v "$cmd" >/dev/null || {
+            echo "$cmd is not installed" 1>&2
+            exit 1
+        }
+    done
+}
+
+check git tree parallel
+
+GIT_DIR="$PWD"
+
+cd "$(mktemp -d)" || exit 1
+
+create () {
+    local file="$1"
+    if [[ "$file" == */* ]]; then
+        [[ -d "${file%/*}" ]] || mkdir -p "${file%/*}"
+    fi
+    touch "$file"
+}
+export -f create
+
+git -C "$GIT_DIR" ls-files -z | parallel -0 create
+
+tree
