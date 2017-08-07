@@ -5,6 +5,7 @@
 # treeize - Treeize the output of git ls-files
 #
 # Depends: git(1), tree(1)
+# Bug: Too slow for 100+ files
 
 if ! [[ -p /dev/stdin ]]; then
     echo "error: not piped input" 1>&2
@@ -23,9 +24,10 @@ command -v tree >/dev/null || {
 
 cd "$(mktemp -d)" || exit 1
 
-# XXX: This is too slow, try cache the previous result?
 while IFS= read -r file; do
-    [[ "$file" == */* ]] && mkdir -p "${file%/*}"
+    if [[ "$file" == */* ]]; then
+        [[ -d "${file%/*}" ]] || mkdir -p "${file%/*}"
+    fi
     touch "$file"
 done < /dev/stdin
 
