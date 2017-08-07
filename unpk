@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2017 Chunyang Xu
+#
+# unpk - Unpack file archives of various types
+#
+# See also http://www.nongnu.org/atool/
+
+if test $# -eq 0; then
+    echo "error: too few arguments"
+    echo "usage: ${0##*/} archive ..."
+    exit 1
+fi
+
+for f in "$@"; do
+    case "$f" in
+        *.tar.gz | *.tgz)
+            tar xzf "$f"
+            ;;
+        *.tar.bz2 | *.tbz)
+            tar xjf "$f"
+            ;;
+        *.zip)
+            unzip "$f"
+            ;;
+        *.rar)
+            unrar x "$f"
+            ;;
+        *.tar)
+            tar xf "$f"
+            ;;
+        *.7z)
+            7z x "$f"
+            ;;
+        *)
+            echo "file format not supported: $f"
+            ;;
+    esac
+done
