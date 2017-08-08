@@ -15,12 +15,14 @@ if [[ $# -ne 0 ]]; then
 fi
 
 check () {
+    not_found=no
     for cmd in "$@"; do
         command -v "$cmd" >/dev/null || {
             echo "$cmd is not installed" 1>&2
-            exit 1
+            not_found=yes
         }
     done
+    [[ $not_found == yes ]] && exit 1
 }
 
 check git tree parallel
