@@ -4,8 +4,17 @@
 #
 # build-emacs - Build Emacs from source
 
+usage () {
+    echo "Usage: ${0##*/} emacs-version" 1>&2
+}
+
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+    usage
+    exit 0
+fi
+
 [[ "$1" =~ ^[0-9]*\.[0-9](\.[0-9])?$ ]] || {
-    echo "usage: ${0##*/} emacs-version" 1>&2
+    usage
     exit 1
 }
 
@@ -25,5 +34,6 @@ cd "$EMACS" || exit 1
 if [[ -x src/emacs ]]; then
     src/emacs --version
 else
-    ./autogen.sh && ./configure --without-x --without-ns --without-all && make && src/emacs --version    
+    ./autogen.sh && ./configure --without-x --without-ns --without-all \
+        && make && src/emacs --version    
 fi

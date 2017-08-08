@@ -6,9 +6,18 @@
 #
 # See also http://www.nongnu.org/atool/
 
+usage() {
+    echo "Usage: ${0##*/} archive ..." 1>&2
+}
+
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+    usage
+    exit 0
+fi
+
 if test $# -eq 0; then
-    echo "error: too few arguments"
-    echo "usage: ${0##*/} archive ..."
+    echo "Error: too few arguments"
+    usage
     exit 1
 fi
 

@@ -8,9 +8,18 @@
 #
 # Known bug: Too slow
 
+usage () {
+    echo "usage: ${0##*/}" 1>&2
+}
+
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+    usage
+    exit 0
+fi
+
 if [[ $# -ne 0 ]]; then
     echo "error: too many arguments" 1>&2
-    echo "usage: ${0##*/}" 1>&2
+    usage
     exit 1
 fi
 
@@ -40,6 +49,8 @@ create () {
 }
 export -f create
 
+set -e
+set -o pipefail
 git -C "$GIT_DIR" ls-files -z | parallel -0 create
 
 tree
