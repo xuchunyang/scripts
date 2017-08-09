@@ -5,7 +5,13 @@
 # build-emacs - Build Emacs from source
 
 usage () {
-    echo "Usage: ${0##*/} emacs-version" 1>&2
+    cat <<EOF 1>&2
+Usage: ${0##*/} VERSION
+Build VERSION of GNU Emacs from source.
+
+Example:
+  ${0##*/} 25.2   Build GNU Emacs 25.2 from source.
+EOF
 }
 
 if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
@@ -34,6 +40,8 @@ cd "$EMACS" || exit 1
 if [[ -x src/emacs ]]; then
     src/emacs --version
 else
-    ./autogen.sh && ./configure --without-x --without-ns --without-all \
-        && make && src/emacs --version    
+    ./autogen.sh                                              \
+        && ./configure --without-x --without-ns --without-all \
+        && make                                               \
+        && src/emacs --version    
 fi

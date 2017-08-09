@@ -7,7 +7,10 @@
 # See also http://www.nongnu.org/atool/
 
 usage() {
-    echo "Usage: ${0##*/} archive ..." 1>&2
+    cat <<EOF 1>&2
+Usage: ${0##*/} archive ...
+Extract ARCHIVE(s).
+EOF
 }
 
 if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then

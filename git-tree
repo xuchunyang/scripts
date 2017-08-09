@@ -9,7 +9,8 @@
 # Known bug: Too slow
 
 usage () {
-    echo "usage: ${0##*/}" 1>&2
+    echo "Usage: ${0##*/}" 1>&2
+    echo "Treeize the output of git ls-files." 1>&2
 }
 
 if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
