@@ -48,6 +48,5 @@ BEGIN {
     }
 
     close(http_service)
-    # XXX: Prettify the output
-    print substr(buf, 0, content_length)
+    print substr(buf, 0, content_length) | "jq"
 }
