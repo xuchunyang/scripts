@@ -1,0 +1,19 @@
+#! /usr/bin/gawk -f
+
+BEGIN {
+    if (ARGC != 2) {
+        printf "Usage: %s QUERY\n", ARGV[0] > "/dev/stderr"
+        exit
+    }
+    query = ARGV[1]
+    url = "http://fanyi.youdao.com/openapi.do?keyfrom=YouDaoCV&key=659600698&type=data&doctype=json&version=1.1&q=" query
+    server = "/inet/tcp/0/fanyi.youdao.com/80"
+
+    printf "GET %s HTTP/1.1\r\n", url |& server
+    printf "Host: fanyi.youdao.com\r\n" |& server
+    printf "\r\n" |& server
+
+    while ((server |& getline) > 0)
+        printf "%s\r\n", $0
+    close(server)
+}
