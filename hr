@@ -15,6 +15,9 @@ function repeat(str, len) {
 BEGIN {
     ARGC > 1 ? str = ARGV[1] : str = "-"
 
-    "tput cols" | getline len
+    cmd = "tput cols"
+    cmd | getline len
+    close(cmd)
+
     print repeat(str, len)
 }

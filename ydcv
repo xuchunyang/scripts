@@ -48,5 +48,6 @@ BEGIN {
     }
 
     close(http_service)
-    print substr(buf, 0, content_length) | "jq"
+    print substr(buf, 1, content_length) | "jq"
+    close("jq")
 }
