@@ -1,0 +1,20 @@
+#! /usr/bin/gawk -f
+#
+# Usage: hr [STR]
+
+function repeat(str, len) {
+    while (1) {
+        if (length(buf) < len)
+            buf = buf str
+        else
+            break
+    }
+    return substr(buf, 1, len)
+}
+
+BEGIN {
+    ARGC > 1 ? str = ARGV[1] : str = "-"
+
+    "tput cols" | getline len
+    print repeat(str, len)
+}
