@@ -1,14 +1,25 @@
 #! /usr/bin/gawk -f
 
+function url_hexify_string(str) {
+    if (system("command -v jq > /dev/null")) {
+        print "jq is not found, install it from https://stedolan.github.io/jq/" > "/dev/stderr"
+        exit(1)
+    }
+    command = "printf '%s' " str " | jq -R -r @uri"
+    command | getline
+    close(command)
+    return $0
+}
+
 BEGIN {
     if (ARGC != 2) {
         printf "Usage: %s QUERY\n", ARGV[0] > "/dev/stderr"
-        exit
+        exit(1)
     }
 
     http_service = "/inet/tcp/0/fanyi.youdao.com/80"
-    # XXX: URI-encode ARGV[1], see https://stackoverflow.com/questions/3728049/using-awk-printf-to-urldecode-text
-    path = "/openapi.do?keyfrom=YouDaoCV&key=659600698&type=data&doctype=json&version=1.1&q=" ARGV[1]
+    query = url_hexify_string(ARGV[1])
+    path = "/openapi.do?keyfrom=YouDaoCV&key=659600698&type=data&doctype=json&version=1.1&q=" query
 
     printf("GET %s HTTP/1.1\r\nHost: fanyi.youdao.com\r\n\r\n", path) |& http_service
 
