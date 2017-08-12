@@ -5,15 +5,38 @@ BEGIN {
         printf "Usage: %s QUERY\n", ARGV[0] > "/dev/stderr"
         exit
     }
-    query = ARGV[1]
-    url = "http://fanyi.youdao.com/openapi.do?keyfrom=YouDaoCV&key=659600698&type=data&doctype=json&version=1.1&q=" query
-    server = "/inet/tcp/0/fanyi.youdao.com/80"
 
-    printf "GET %s HTTP/1.1\r\n", url |& server
-    printf "Host: fanyi.youdao.com\r\n" |& server
-    printf "\r\n" |& server
+    http_service = "/inet/tcp/0/fanyi.youdao.com/80"
+    # XXX: URI-encode ARGV[1], see https://stackoverflow.com/questions/3728049/using-awk-printf-to-urldecode-text
+    path = "/openapi.do?keyfrom=YouDaoCV&key=659600698&type=data&doctype=json&version=1.1&q=" ARGV[1]
 
-    while ((server |& getline) > 0)
-        printf "%s\r\n", $0
-    close(server)
+    printf("GET %s HTTP/1.1\r\nHost: fanyi.youdao.com\r\n\r\n", path) |& http_service
+
+    RS = "\r\n"                 # the record separator
+    FS = ": "                   # the field separator
+
+    while ((http_service |& getline) > 0) {
+        if ($1 == "Content-Length")
+            content_length = int($2)
+        else if ($0 == "Transfer-Encoding: chunked")
+            chunked = 1
+        else if ($0 ~ /^$/ )
+            break
+    }
+
+    if (chunked) content_length = 0
+
+    while ((http_service |& getline) > 0) {
+        if (/^$/)
+            break
+        # https://en.wikipedia.org/wiki/Chunked_transfer_encoding
+        else if (chunked && ++i % 2) # XXX: $0 should be a hex number, check against /^[0-9a-f]+$/?
+            content_length += strtonum("0x"$0)
+        else
+            buf = buf $0
+    }
+
+    close(http_service)
+    # XXX: Prettify the output
+    print substr(buf, 0, content_length)
 }
