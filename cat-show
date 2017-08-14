@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2017 Chunyang Xu
+#
+# cat-show - Show code of scripting utilities located in the system PATH
+
+progname="${0##*/}"
+
+usage () {
+    echo "Usage: ${progname} script"
+}
+
+for arg in "${@}"; do
+    case "$arg" in
+        -h|--help) usage && exit 0 ;;
+        -*) echo "Unrecognized option '${arg}'" 1>&2 && usage && exit 1 ;;
+    esac
+done
+
+script="$1"
+
+if command -v "${script}" &>/dev/null; then
+    less "$(command -v "${script}")"
+else
+    echo "${progname}: '${script}' was not found in PATH" 1>&2
+    exit 1
+fi
