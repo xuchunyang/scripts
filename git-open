@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2017 Chunyang Xu
+#
+# git-open - Open GitHub for current repo
+
+url="$(git config --get remote.origin.url)" || exit
+
+# git@github.com:xuchunyang/emacs.d.git
+r1='git@github\.com:(.*)\.git'
+# https://github.com/Wilfred/remacs.git
+r2='https://github\.com/(.*)\.git'
+
+if [[ "$url" =~ $r1 ]] || [[ "$url" =~ $r2 ]]; then
+    repo=${BASH_REMATCH[1]}
+    open "https://github.com/$repo"
+else
+    echo "Unknown URL '$url', is it hosting on GitHub?" 1>&2
+    exit 1
+fi
