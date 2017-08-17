@@ -1,4 +1,6 @@
-#! /usr/bin/gawk -f
+#!/usr/bin/gawk -f
+#
+# hr - HTML <hr> in the terminal
 #
 # Usage: hr [STR]
 

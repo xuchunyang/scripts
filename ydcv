@@ -1,4 +1,9 @@
-#! /usr/bin/gawk -f
+#!/usr/bin/gawk -f
+#
+# ydcv - Youdao Dictionary Console Version written in GNU Awk
+#
+# Depends: jq
+# Usage: ydcv <QUERY>
 
 function url_hexify_string(str) {
     if (system("command -v jq > /dev/null")) {
