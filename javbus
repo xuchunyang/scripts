@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8; -*-
+#
+# javbus - 根据番号获得演员
+#
+# Usage: javbus ID
+
+require 'nokogiri'
+require 'open-uri'
+
+def usage
+  puts %(\
+Usage: #{File.basename __FILE__} ID
+
+ID 由字母和数字构成, 如 'SNIS-928',
+字母代表厂商, 数字代表编号,
+其中 '-' 可省略, 即 'SNIS928' 亦可.
+)
+end
+
+if ARGV[0] && ARGV[0] =~ /([a-zA-Z]+)-?([0-9]+)/
+  id = "#{$1}-#{$2}"
+  url = "https://www.javbus.com/#{id}"
+  puts "Opening #{url}"
+  page = Nokogiri::HTML(open(url))
+  stars = page.css('div.star-name').map(&:text)
+  puts stars.join(', ')
+else
+  usage
+  exit 1
+end
