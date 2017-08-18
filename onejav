@@ -25,9 +25,13 @@ if ARGV[0] && ARGV[0] =~ /([a-zA-Z]+)-?([0-9]+)/
   page = Nokogiri::HTML(open(url))
   actresses = page.css('div.list-actress').map(&:text).map(&:strip)
   description = page.at('meta[name="description"]')['content']
+  tags = page.css('span.tag').map(&:text)
+  date = page.css('a').select { |x| x['href'] =~ /[0-9]{4}\/[0-9]{2}\/[0-9]{2}/ }.first['href']
   cover = page.css('div.card-group div.card img.img-fluid').first.attr('src')
   puts '女优 => ' + actresses.join(', ')
   puts '简介 => ' + description
+  puts '日期 => ' + date
+  puts '标签 => ' + tags.join(' ')
   puts '封面 => ' + cover
   `which imgcat`
   if $?.success?
