@@ -22,7 +22,7 @@ if ARGV[0] && ARGV[0] =~ /([a-zA-Z]+)-?([0-9]+)/
   id = "#{$1.downcase}#{$2}"
   url = "https://onejav.com/torrent/#{id}"
   puts "Opening #{url}"
-  page = Nokogiri::HTML(open(url))
+  page = Nokogiri::HTML(open(url), nil, "UTF-8")
   actresses = page.css('div.list-actress').map(&:text).map(&:strip)
   description = page.at('meta[name="description"]')['content']
   tags = page.css('span.tag').map(&:text)
@@ -31,7 +31,7 @@ if ARGV[0] && ARGV[0] =~ /([a-zA-Z]+)-?([0-9]+)/
   puts '女优 => ' + actresses.join(', ')
   puts '简介 => ' + description
   puts '日期 => ' + date
-  puts '标签 => ' + tags.join(' ')
+  puts '标签 => ' + tags.join(', ')
   puts "种子 => curl -o #{id}.torrent https://onejav.com/torrent/#{id}/download"
   puts '封面 => ' + cover
   `which imgcat`
