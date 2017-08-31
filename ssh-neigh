@@ -3,33 +3,39 @@
 # Copyright (C) 2017 Chunyang Xu
 #
 # arp-ssh - SSH computer under in the same LAN
+#
+# Usage:
+# # 1. Login
+# $ ssh-neigh
+# # 2. Run a command
+# $ ssh-neigh ls -al
+# # 3. Print IP
+# $ ssh-neigh -q
 
-# For plain-Bash solution, refer
-# https://stackoverflow.com/questions/4922943/test-from-shell-script-if-remote-tcp-port-is-open
-if ! command -v nc >/dev/null; then
-    echo "$0: nc not found" 1>&2
+if ! command -v nmap >/dev/null; then
+    echo "$0: nmap not found" 1>&2
     exit 1
 fi
 
-TIMEOUT_SECONDS=1
-SSH_PORT=22
-
-get_hosts () {
-    if command -v arp >/dev/null; then
-        arp -an | awk -F '[()]' '{ if ($2 ~ /192\.168\.0\..../) print $2 }'
-    elif command -v ip >/dev/null; then
-        ip neigh | awk '{ if ($1 ~ /192\.168\.0\..../) print $1 }'
+localhost () {
+    if [[ Linux == "$(uname -s)" ]]; then
+        # Strip the tailing space
+        hostname --ip-addresses | awk '{ print $1 }'
     else
-        echo "$0: arp or ip not found"  1>&2
-        exit 1
+        ipconfig getifaddr en0
     fi
 }
 
-# 我的路由器给下面的机器分配的 IP 从 192.168.0.100 起
-for HOST in $(get_hosts); do
-    if nc -w $TIMEOUT_SECONDS -z $HOST $SSH_PORT &> /dev/null; then
-        echo "ssh $HOST $*"
-        ssh $HOST "$*"
+LOCALHOST=$(localhost)
+
+for HOST in $(nmap -oG - -p 22 192.168.0.100/29 | awk '/open/ { print $2 }'); do
+    if [[ "$HOST" != "$LOCALHOST" ]]; then
+        if [[ "$1" == "-q" ]]; then
+            echo $HOST
+        else
+            echo "sshing $HOST $* ..."
+            ssh $HOST "$*"
+        fi
         break
     fi
 done
