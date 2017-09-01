@@ -12,8 +12,17 @@
 # # 3. Print IP
 # $ ssh-neigh -q
 
+for arg; do
+    if [[ "$arg" == "-d" ]] || [[ "$arg" == "--debug" ]]; then
+        set -o xtrace
+        break
+    fi
+done
+
+progname="${0##*/}"
+
 if ! command -v nmap >/dev/null; then
-    echo "$0: nmap not found" 1>&2
+    echo "$progname: nmap not found" 1>&2
     exit 1
 fi
 
@@ -39,3 +48,6 @@ for HOST in $(nmap -oG - -p 22 192.168.0.100/29 | awk '/open/ { print $2 }'); do
         break
     fi
 done
+
+echo "$progname: no neighbor IP found" 1>&2
+exit 1
