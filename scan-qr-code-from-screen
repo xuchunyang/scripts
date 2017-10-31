@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#
+# scan-qr-code-from-screen - 从屏幕上扫描二维码
+
+TMPFILE=$(mktemp)
+screencapture -x $TMPFILE
+qrdecode $TMPFILE
