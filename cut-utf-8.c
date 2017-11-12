@@ -31,11 +31,11 @@ main (int argc, char *argv[])
           putc (c, stdout);
           continue;
         }
-      if ((c >> 7) == 0)
+      if ((c & 0x80) == 0)
         {
           if (i > N) putc (c, stdout);
         }
-      else if ((c >> 5) == 6)
+      else if ((c & 0x20) == 0)
         {
           int c1 = getc (stdin);
           if (i > N)
@@ -44,7 +44,7 @@ main (int argc, char *argv[])
               putc (c1, stdout);
             }
         }
-      else if ((c >> 4) == 14)
+      else if ((c & 0x10) == 0)
         {
           int c1 = getc (stdin);
           int c2 = getc (stdin);
@@ -55,7 +55,7 @@ main (int argc, char *argv[])
               putc (c2, stdout);
             }
         }
-      else if ((c >> 3) == 30)
+      else if ((c & 0x08) == 0)
         {
           unsigned char rest[3];
           fread (rest, 1, 3, stdin);
