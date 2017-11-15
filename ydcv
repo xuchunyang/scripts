@@ -1,4 +1,4 @@
-#!/usr/bin/gawk -f
+#!/usr/local/bin/gawk -f
 #
 # ydcv - Youdao Dictionary Console Version written in GNU Awk
 #

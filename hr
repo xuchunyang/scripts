@@ -1,4 +1,4 @@
-#!/usr/bin/gawk -f
+#!/usr/local/bin/gawk -f
 #
 # hr - HTML <hr> in the terminal
 #
