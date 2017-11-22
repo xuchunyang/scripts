@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #
 # scan-qr-code-from-screen - 从屏幕上扫描二维码
+#
+# https://xuchunyang.github.io/blog/2017/10/31/scan-QR-code-from-screen/
 
 TMPFILE=$(mktemp)
 screencapture -x $TMPFILE
